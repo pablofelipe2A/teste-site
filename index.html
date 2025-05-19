@@ -3,18 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pong Game</title>
+  <title>Pong</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="header.css">
 </head>
 <body>
   <header>
-    <h1>Jogo Pong no GitHub</h1>
+    <h1>Jogo Pong</h1>
   </header>
 
   <main>
-    <canvas id="pong" width="800" height="500"></canvas>
-  </main>
+  <div class="scoreboard">
+    <span id="player-score">0</span> - <span id="ai-score">0</span>
+  </div>
+  <canvas id="pong" width="800" height="500"></canvas>
+  <div id="message" class="hidden"></div>
+</main>
+
 
   <script src="script.js"></script>
 </body>

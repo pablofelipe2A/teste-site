@@ -1,12 +1,19 @@
 const canvas = document.getElementById("pong");
 const ctx = canvas.getContext("2d");
 
+const playerScoreDisplay = document.getElementById("player-score");
+const aiScoreDisplay = document.getElementById("ai-score");
+const messageBox = document.getElementById("message");
+
 const paddleWidth = 10;
 const paddleHeight = 100;
 let upArrowPressed = false;
 let downArrowPressed = false;
 
-// Objetos
+let playerScore = 0;
+let aiScore = 0;
+let gameOver = false;
+
 const player = {
   x: 0,
   y: canvas.height / 2 - paddleHeight / 2,
@@ -35,7 +42,6 @@ const ball = {
   color: "white"
 };
 
-// Funções de desenho
 function drawRect(x, y, w, h, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, w, h);
@@ -56,25 +62,22 @@ function draw() {
   drawCircle(ball.x, ball.y, ball.radius, ball.color);
 }
 
-// Movimento e colisão
 function update() {
-  if (upArrowPressed && player.y > 0) player.y -= player.dy;
-  if (downArrowPressed && (player.y < canvas.height - player.height)) player.y += player.dy;
+  if (gameOver) return;
 
-  // Movimento da IA
+  if (upArrowPressed && player.y > 0) player.y -= player.dy;
+  if (downArrowPressed && player.y < canvas.height - player.height) player.y += player.dy;
+
   if (ball.y < ai.y + ai.height / 2) ai.y -= ai.dy;
   else ai.y += ai.dy;
 
-  // Movimento da bola
   ball.x += ball.dx;
   ball.y += ball.dy;
 
-  // Rebater nas paredes
   if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
     ball.dy *= -1;
   }
 
-  // Rebater nas raquetes
   let playerCollision = ball.x - ball.radius < player.x + player.width &&
                         ball.y > player.y &&
                         ball.y < player.y + player.height;
@@ -87,15 +90,43 @@ function update() {
     ball.dx *= -1;
   }
 
-  // Resetar bola se sair
-  if (ball.x < 0 || ball.x > canvas.width) {
-    ball.x = canvas.width / 2;
-    ball.y = canvas.height / 2;
-    ball.dx *= -1;
+  if (ball.x < 0) {
+    aiScore++;
+    aiScoreDisplay.textContent = aiScore;
+    resetBall();
+  }
+
+  if (ball.x > canvas.width) {
+    playerScore++;
+    playerScoreDisplay.textContent = playerScore;
+    resetBall();
+  }
+
+  checkWinCondition();
+}
+
+function resetBall() {
+  ball.x = canvas.width / 2;
+  ball.y = canvas.height / 2;
+  ball.dx *= -1;
+  ball.dy *= Math.random() > 0.5 ? 1 : -1;
+}
+
+function checkWinCondition() {
+  if (playerScore === 5) {
+    messageBox.textContent = "VOCÊ GANHOU!";
+    endGame();
+  } else if (aiScore === 5) {
+    messageBox.textContent = "SE F*DEU 😈";
+    endGame();
   }
 }
 
-// Controle
+function endGame() {
+  gameOver = true;
+  messageBox.classList.remove("hidden");
+}
+
 document.addEventListener("keydown", function(e) {
   if (e.key === "ArrowUp") upArrowPressed = true;
   if (e.key === "ArrowDown") downArrowPressed = true;
@@ -106,7 +137,6 @@ document.addEventListener("keyup", function(e) {
   if (e.key === "ArrowDown") downArrowPressed = false;
 });
 
-// Loop
 function gameLoop() {
   update();
   draw();
