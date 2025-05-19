@@ -1,8 +1,6 @@
 const canvas = document.getElementById("pong");
 const ctx = canvas.getContext("2d");
 
-const playerScoreDisplay = document.getElementById("player-score");
-const aiScoreDisplay = document.getElementById("ai-score");
 const messageBox = document.getElementById("message");
 
 const paddleWidth = 10;
@@ -36,11 +34,17 @@ const ball = {
   x: canvas.width / 2,
   y: canvas.height / 2,
   radius: 10,
-  speed: 5,
   dx: 5,
   dy: 5,
   color: "white"
 };
+
+// Obstáculos no meio do campo
+const obstacles = [
+  { x: canvas.width / 2 - 10, y: 100, width: 20, height: 50 },
+  { x: canvas.width / 2 - 10, y: 250, width: 20, height: 50 },
+  { x: canvas.width / 2 - 10, y: 400, width: 20, height: 50 }
+];
 
 function drawRect(x, y, w, h, color) {
   ctx.fillStyle = color;
@@ -55,11 +59,26 @@ function drawCircle(x, y, r, color) {
   ctx.fill();
 }
 
+function drawScore() {
+  ctx.fillStyle = "#0ff";
+  ctx.font = "32px Arial";
+  ctx.fillText(`${playerScore} - ${aiScore}`, canvas.width / 2 - 40, 40);
+}
+
+function drawObstacles() {
+  ctx.fillStyle = "#555";
+  obstacles.forEach(ob => {
+    ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+  });
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawRect(player.x, player.y, player.width, player.height, player.color);
   drawRect(ai.x, ai.y, ai.width, ai.height, ai.color);
   drawCircle(ball.x, ball.y, ball.radius, ball.color);
+  drawScore();
+  drawObstacles();
 }
 
 function update() {
@@ -90,15 +109,25 @@ function update() {
     ball.dx *= -1;
   }
 
+  // Colisão com obstáculos
+  obstacles.forEach(ob => {
+    if (
+      ball.x + ball.radius > ob.x &&
+      ball.x - ball.radius < ob.x + ob.width &&
+      ball.y + ball.radius > ob.y &&
+      ball.y - ball.radius < ob.y + ob.height
+    ) {
+      ball.dx *= -1;
+    }
+  });
+
   if (ball.x < 0) {
     aiScore++;
-    aiScoreDisplay.textContent = aiScore;
     resetBall();
   }
 
   if (ball.x > canvas.width) {
     playerScore++;
-    playerScoreDisplay.textContent = playerScore;
     resetBall();
   }
 
@@ -108,8 +137,8 @@ function update() {
 function resetBall() {
   ball.x = canvas.width / 2;
   ball.y = canvas.height / 2;
-  ball.dx *= -1;
-  ball.dy *= Math.random() > 0.5 ? 1 : -1;
+  ball.dx *= Math.random() > 0.5 ? 1 : -1;
+  ball.dy = (Math.random() * 6) - 3;
 }
 
 function checkWinCondition() {
