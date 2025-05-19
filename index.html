@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pong</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="header.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pong Supremo v1.0</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="header.css" />
 </head>
 <body>
   <header>
-    <h1>Jogo Pong</h1>
+    <h1>Pong Supremo 🎮</h1>
   </header>
 
   <main>
-  <canvas id="pong" width="800" height="500"></canvas>
-  <div id="message" class="hidden"></div>
-</main>
+    <canvas id="pong" width="800" height="500"></canvas>
+    <div id="message" class="hidden">
+      <p id="msg-text"></p>
+      <button onclick="restartGame()">Jogar Novamente</button>
+    </div>
+  </main>
 
-
+  <!-- Audio -->
+  <audio id="bg-music" src="assets/music.mp3" loop autoplay></audio>
+  <audio id="hit-sound" src="assets/hit.wav"></audio>
+  <audio id="win-sound" src="assets/win.wav"></audio>
+  <audio id="lose-sound" src="assets/lose.wav"></audio>
 
   <script src="script.js"></script>
 </body>
